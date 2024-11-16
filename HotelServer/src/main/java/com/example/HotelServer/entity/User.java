@@ -9,6 +9,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.example.HotelServer.dto.UserDto;
 
 import java.util.Collection;
 import java.util.List;
@@ -52,5 +53,15 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+
+    public UserDto getUserDto(){
+        UserDto dto = new UserDto();
+        dto.setId(Id);
+        dto.setName (name);
+        dto.setEmail(email);
+        dto.setUserRole(userRole);
+        return dto;
     }
 }
