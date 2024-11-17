@@ -32,7 +32,7 @@ public class WebSecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAnyAuthority(UserRole.ADMIN.name())
-                        .requestMatchers("/api/cutsomer/**").hasAnyAuthority(UserRole.CUSTOMER.name())
+                        .requestMatchers("/api/customer/**").hasAnyAuthority(UserRole.CUSTOMER.name())
                         .anyRequest().authenticated())
           .sessionManagement(manager-> manager.sessionCreationPolicy(STATELESS))
           .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
