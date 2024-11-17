@@ -1,5 +1,6 @@
 package com.example.HotelServer.configs;
 
+import com.example.HotelServer.enums.UserRole;
 import com.example.HotelServer.services.jwt.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,12 +14,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfiguration {
     private final UserService userService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -26,7 +31,11 @@ public class WebSecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/api/admin/**").hasAnyAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/cutsomer/**").hasAnyAuthority(UserRole.CUSTOMER.name())
+                        .anyRequest().authenticated())
+          .sessionManagement(manager-> manager.sessionCreationPolicy(STATELESS))
+          .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
